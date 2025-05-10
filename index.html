@@ -8,7 +8,6 @@
   <link href="index.css" rel="stylesheet">
 </head>
 <body>
-<!-- latest changes  -->
 <div class="score-container">
     <!-- score buttons container -->
     <div class="container my-4 p-3 border rounded shadow-sm" id="controls">
@@ -22,20 +21,17 @@
         <h4 class="text-center">Team Players</h4>
         <div class="row">
             <div class="col-md-6">
-            <h5 id="team1-name-display">Team 1</h5>
+            <h5 id="team1-name-display">Team-A</h5>
             <button class="btn btn-sm btn-outline-primary mb-2" onclick="addPlayerToTeam('team1')">Add Player</button>
             <ul id="team1-player-list" class="list-group"></ul>
             </div>
             <div class="col-md-6">
-            <h5 id="team2-name-display">Team 2</h5>
+            <h5 id="team2-name-display">Team-B</h5>
             <button class="btn btn-sm btn-outline-danger mb-2" onclick="addPlayerToTeam('team2')">Add Player</button>
             <ul id="team2-player-list" class="list-group"></ul>
             </div>
         </div>
     </div>
-
-
-
 
     <h5 class="mb-3">Update Score</h5>
     <div class="mb-2">
@@ -66,7 +62,7 @@
   <div class="d-flex justify-content-between align-items-center">
     <!-- Left Side -->
     <div class="text-start">
-        <div class="team-name" id="team1-name">CSK</div>
+        <div class="team-name" id="team1-name">Team-A</div>
         <div class="score" id="team1-score">0/0</div>
         <div class="overs" id="team1-overs">(0.0 overs)</div>
     </div>
@@ -76,7 +72,7 @@
 
     <!-- Right Side -->
     <div class="text-end">
-        <div class="team-name" id="team2-name">RCB</div>
+        <div class="team-name" id="team2-name">Team-B</div>
         <div class="score" id="team2-score">0/0</div>
         <div class="overs" id="team2-overs">(0.0 overs)</div>
     </div>

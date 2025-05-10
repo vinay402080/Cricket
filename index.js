@@ -1,5 +1,4 @@
 
-// latest changes
 function createTeams() {
   const team1Name = prompt("Enter Team 1 Name:", team1.name);
   const team2Name = prompt("Enter Team 2 Name:", team2.name);
@@ -7,24 +6,26 @@ function createTeams() {
   if (team1Name) {
     team1.name = team1Name;
     document.getElementById("team1-name").textContent = team1.name;
+     document.getElementById("team1-name-display").textContent = team1.name;
   }
 
   if (team2Name) {
     team2.name = team2Name;
     document.getElementById("team2-name").textContent = team2.name;
+     document.getElementById("team2-name-display").textContent = team2.name;
   }
 }
 
 //   score implementation
 let team1 = {
-  name: "CSK",
+  name: "0",
   runs: 0,
   wickets: 0,
   balls: 0
 };
 
 let team2 = {
-  name: "RCB",
+  name: "0",
   runs: 0,
   wickets: 0,
   balls: 0
@@ -83,7 +84,7 @@ let playerCounter = { team1: 1, team2: 1 }; // to generate unique IDs
 
 function addPlayerToTeam(team) {
   const teamObj = team === 'team1' ? team1 : team2;
-  const countKey = team === 'team1' ? 'team1' : 'team2';
+  const countKey = team === 'team1' ? 'CSK' : 'RCB';
 
   const playerName = prompt(`Enter player name for ${teamObj.name}:`);
   if (!playerName) return;
