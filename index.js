@@ -131,7 +131,7 @@ function addPlayerToTeam(team) {
   };
 
   teamObj.players.push(player);
-  alert(`Added ${player.name} (${player.id}) to ${teamObj.name}`);
+  //alert(`Added ${player.name} (${player.id}) to ${teamObj.name}`);
   renderPlayerList(team);
 }
 
