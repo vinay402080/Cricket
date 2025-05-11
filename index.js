@@ -26,8 +26,6 @@ let playerCounter = {
   team1: 1,
   team2: 1
 };
-// history
-let scoreHistory = [];
 
 // ==========================
 // TEAM NAME SETUP FUNCTION
@@ -74,31 +72,35 @@ function updateScoreDisplay() {
 // ==========================
 
 function addRuns(run) {
-  saveState();
   currentBattingTeam.runs += run;
   currentBattingTeam.balls++;
   updateScoreDisplay();
+  addBallToHistory(run);
+  saveState();
 }
 
 function addWide() {
-  saveState();
   currentBattingTeam.runs += 1;
   // No ball counted
   updateScoreDisplay();
+  addBallToHistory("WD");
+  saveState();
 }
 
 function addNoBall() {
-  saveState();
   currentBattingTeam.runs += 1;
   // No ball counted
   updateScoreDisplay();
+  addBallToHistory("NB");
+  saveState();
 }
 
 function addWicket() {
-  saveState();
   currentBattingTeam.wickets++;
   currentBattingTeam.balls++;
   updateScoreDisplay();
+  addBallToHistory("W");
+  saveState();
 }
 
 
@@ -165,6 +167,11 @@ function renderPlayerList(teamKey) {
   });
 }
 
+// history
+let scoreHistory = [];
+
+let currentOver = 1;
+let legalBallsInOver = 0;
 
 function saveState() {
   scoreHistory.push({
@@ -175,11 +182,41 @@ function saveState() {
   });
 }
 
-function undoLastAction() {
-  if (scoreHistory.length === 0) {
-    alert("No action to undo!");
-    return;
+function addBallToHistory(run) {
+  const historyContainer = document.getElementById("ball-history");
+
+  let overBox = document.getElementById(`over-${currentOver}`);
+  if (!overBox) {
+    overBox = document.createElement("div");
+    overBox.className = "over-box";
+    overBox.id = `over-${currentOver}`;
+
+    const label = document.createElement("div");
+    label.className = "over-label";
+    label.textContent = `Over ${currentOver}`;
+    overBox.appendChild(label);
+
+    historyContainer.prepend(overBox);
   }
+
+  const ball = document.createElement("span");
+  ball.className = "badge bg-primary";
+  ball.textContent = run;
+  overBox.appendChild(ball);
+
+  if (run !== 'WD' && run !== 'NB') {
+    legalBallsInOver++;
+  }
+
+  if (legalBallsInOver === 6) {
+    currentOver++;
+    legalBallsInOver = 0;
+  }
+}
+
+
+function undoLastAction() {
+  if (scoreHistory.length === 0) return;
 
   const lastState = scoreHistory.pop();
   const teamObj = lastState.team === 'team1' ? team1 : team2;
@@ -189,4 +226,25 @@ function undoLastAction() {
   teamObj.balls = lastState.balls;
 
   updateScoreDisplay();
+
+  // Remove last ball from current over
+  const overBox = document.getElementById(`over-${currentOver}`);
+  if (overBox && overBox.lastChild && overBox.childNodes.length > 1) {
+    const lastBall = overBox.lastChild;
+    const lastBallText = lastBall.textContent;
+
+    overBox.removeChild(lastBall);
+
+    if (lastBallText !== "WD" && lastBallText !== "NB") {
+      legalBallsInOver--;
+    }
+
+    // If no balls left in the over, remove the entire over
+    if (overBox.childNodes.length === 1) { // Only label remains
+      overBox.remove();
+      if (currentOver > 1) currentOver--;
+      legalBallsInOver = 6;
+    }
+  }
 }
+

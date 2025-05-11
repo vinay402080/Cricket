@@ -18,3 +18,48 @@
       font-size: 0.95rem;
       color: #6c757d;
     }
+
+
+
+.ball-box {
+  width: 35px;
+  height: 35px;
+  background-color: #f1f1f1;
+  border: 2px solid #6c757d;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+.badge {
+  font-size: 1rem;
+  padding: 0.6em 0.75em;
+}
+#ball-history {
+  white-space: nowrap;
+}
+
+#ball-history .over-box {
+  display: flex;
+  flex-direction: row; /* display balls in a row inside over */
+  flex-shrink: 0; /* prevent shrinking when overflowing */
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  padding: 10px;
+  min-width: 150px;
+  flex-wrap: wrap;
+}
+
+#ball-history .over-label {
+  width: 100%;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+#ball-history .badge {
+  min-width: 30px;
+  text-align: center;
+  margin: 2px;
+}
