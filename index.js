@@ -227,8 +227,13 @@ function undoLastAction() {
 
   updateScoreDisplay();
 
-  // Remove last ball from current over
-  const overBox = document.getElementById(`over-${currentOver}`);
+  // Determine which over to remove the ball from
+  let overToEdit = currentOver;
+  if (legalBallsInOver === 0 && currentOver > 1) {
+    overToEdit = currentOver - 1;
+  }
+
+  const overBox = document.getElementById(`over-${overToEdit}`);
   if (overBox && overBox.lastChild && overBox.childNodes.length > 1) {
     const lastBall = overBox.lastChild;
     const lastBallText = lastBall.textContent;
@@ -237,14 +242,20 @@ function undoLastAction() {
 
     if (lastBallText !== "WD" && lastBallText !== "NB") {
       legalBallsInOver--;
+      if (legalBallsInOver < 0) {
+        legalBallsInOver = 5;
+        currentOver--;
+      }
     }
 
-    // If no balls left in the over, remove the entire over
-    if (overBox.childNodes.length === 1) { // Only label remains
+    // If only label remains, remove the over box
+    if (overBox.childNodes.length === 1) {
       overBox.remove();
-      if (currentOver > 1) currentOver--;
-      legalBallsInOver = 6;
     }
   }
+
+  // Update UI
+  document.getElementById("current-over").textContent = `Current Over: ${currentOver}`;
 }
+
 
