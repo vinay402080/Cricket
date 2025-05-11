@@ -26,7 +26,8 @@ let playerCounter = {
   team1: 1,
   team2: 1
 };
-
+// history
+let scoreHistory = [];
 
 // ==========================
 // TEAM NAME SETUP FUNCTION
@@ -73,24 +74,28 @@ function updateScoreDisplay() {
 // ==========================
 
 function addRuns(run) {
+  saveState();
   currentBattingTeam.runs += run;
   currentBattingTeam.balls++;
   updateScoreDisplay();
 }
 
 function addWide() {
+  saveState();
   currentBattingTeam.runs += 1;
   // No ball counted
   updateScoreDisplay();
 }
 
 function addNoBall() {
+  saveState();
   currentBattingTeam.runs += 1;
   // No ball counted
   updateScoreDisplay();
 }
 
 function addWicket() {
+  saveState();
   currentBattingTeam.wickets++;
   currentBattingTeam.balls++;
   updateScoreDisplay();
@@ -158,4 +163,30 @@ function renderPlayerList(teamKey) {
     li.textContent = `${player.name} (${player.id})`;
     listElement.appendChild(li);
   });
+}
+
+
+function saveState() {
+  scoreHistory.push({
+    team: currentBattingTeam === team1 ? 'team1' : 'team2',
+    runs: currentBattingTeam.runs,
+    wickets: currentBattingTeam.wickets,
+    balls: currentBattingTeam.balls
+  });
+}
+
+function undoLastAction() {
+  if (scoreHistory.length === 0) {
+    alert("No action to undo!");
+    return;
+  }
+
+  const lastState = scoreHistory.pop();
+  const teamObj = lastState.team === 'team1' ? team1 : team2;
+
+  teamObj.runs = lastState.runs;
+  teamObj.wickets = lastState.wickets;
+  teamObj.balls = lastState.balls;
+
+  updateScoreDisplay();
 }
