@@ -178,3 +178,88 @@ function undoLastAction() {
 
   document.getElementById("current-over").textContent = `Current Over: ${currentOver}`;
 }
+
+//==========================================================================================
+let players = JSON.parse(localStorage.getItem("players")) || [];
+let teams = JSON.parse(localStorage.getItem("teams")) || { teamA: [], teamB: [] };
+
+function saveData() {
+  localStorage.setItem("players", JSON.stringify(players));
+  localStorage.setItem("teams", JSON.stringify(teams));
+}
+
+function addPlayer() {
+  const input = document.getElementById("playerInput");
+  const name = input.value.trim();
+  if (name && !players.includes(name)) {
+    players.push(name);
+    saveData();
+    input.value = "";
+    render();
+  } else {
+    alert("Player already exists or name is empty.");
+  }
+}
+
+function resetAll() {
+  if (confirm("Are you sure you want to reset all players and teams?")) {
+    players = [];
+    teams = { teamA: [], teamB: [] };
+    saveData();
+    render();
+  }
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+function drag(ev) {
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+function drop(ev, target) {
+  ev.preventDefault();
+  const id = ev.dataTransfer.getData("text");
+  const name = document.getElementById(id).textContent;
+
+  // Remove from all
+  players = players.filter(p => p !== name);
+  teams.teamA = teams.teamA.filter(p => p !== name);
+  teams.teamB = teams.teamB.filter(p => p !== name);
+
+  // Add to target
+  if (target === "pool") players.push(name);
+  else teams[target].push(name);
+
+  saveData();
+  render();
+}
+
+function render() {
+  const pool = document.getElementById("playerPool");
+  const teamA = document.getElementById("teamA");
+  const teamB = document.getElementById("teamB");
+
+  pool.innerHTML = "";
+  teamA.innerHTML = "";
+  teamB.innerHTML = "";
+
+  players.forEach(p => pool.appendChild(createPlayerElement(p)));
+  teams.teamA.forEach(p => teamA.appendChild(createPlayerElement(p)));
+  teams.teamB.forEach(p => teamB.appendChild(createPlayerElement(p)));
+}
+
+function createPlayerElement(name) {
+  const div = document.createElement("div");
+  div.className = "player";
+  div.textContent = name;
+  div.id = "player-" + name;
+  div.draggable = true;
+  div.ondragstart = drag;
+  return div;
+}
+
+window.onload = render;
+
+

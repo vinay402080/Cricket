@@ -63,3 +63,23 @@
   text-align: center;
   margin: 2px;
 }
+
+
+
+/* 
+sdlfksdlfalfkdjlfaslfjslfsaffl  */
+
+.team-box {
+      min-height: 200px;
+      border: 2px dashed #ccc;
+      padding: 10px;
+      border-radius: 5px;
+    }
+    .player {
+      padding: 5px 10px;
+      margin: 5px 0;
+      background-color: #f8f9fa;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      cursor: grab;
+    }
