@@ -3,29 +3,22 @@
 // ==========================
 
 let team1 = {
-  name: "Team-A",     // Placeholder name
-  runs: 0,
-  wickets: 0,
-  balls: 0,
-  players: []    // Array to hold players
-};
-
-let team2 = {
-  name: "Team-B",     // Placeholder name
+  name: "Team-A",
   runs: 0,
   wickets: 0,
   balls: 0,
   players: []
 };
 
-// Track which team is currently batting
-let currentBattingTeam = team1;
-
-// Used to generate unique player IDs
-let playerCounter = {
-  team1: 1,
-  team2: 1
+let team2 = {
+  name: "Team-B",
+  runs: 0,
+  wickets: 0,
+  balls: 0,
+  players: []
 };
+
+let currentBattingTeam = team1;
 
 // ==========================
 // TEAM NAME SETUP FUNCTION
@@ -48,7 +41,6 @@ function createTeams() {
   }
 }
 
-
 // ==========================
 // SCORE DISPLAY FUNCTION
 // ==========================
@@ -66,43 +58,39 @@ function updateScoreDisplay() {
   }
 }
 
-
 // ==========================
 // SCORING ACTIONS
 // ==========================
 
 function addRuns(run) {
+  saveState();
   currentBattingTeam.runs += run;
   currentBattingTeam.balls++;
   updateScoreDisplay();
   addBallToHistory(run);
-  saveState();
 }
 
 function addWide() {
+  saveState();
   currentBattingTeam.runs += 1;
-  // No ball counted
   updateScoreDisplay();
   addBallToHistory("WD");
-  saveState();
 }
 
 function addNoBall() {
+  saveState();
   currentBattingTeam.runs += 1;
-  // No ball counted
   updateScoreDisplay();
   addBallToHistory("NB");
-  saveState();
 }
 
 function addWicket() {
+  saveState();
   currentBattingTeam.wickets++;
   currentBattingTeam.balls++;
   updateScoreDisplay();
   addBallToHistory("W");
-  saveState();
 }
-
 
 // ==========================
 // CHANGE INNINGS FUNCTION
@@ -113,63 +101,11 @@ function changeInnings() {
   alert(`${currentBattingTeam.name} is now batting!`);
 }
 
-
 // ==========================
-// PLAYER MANAGEMENT
-// ==========================
-
-function addPlayerToTeam(team) {
-  const teamObj = team === 'team1' ? team1 : team2;
-  const countKey = team === 'team1' ? 'team1' : 'team2';
-
-  const playerName = prompt(`Enter player name for ${teamObj.name}:`);
-  if (!playerName) return;
-
-  const playerId = `${team.toUpperCase()}-P${playerCounter[countKey]++}`;
-
-  const player = {
-    id: playerId,
-    name: playerName,
-    runs: 0,
-    balls: 0,
-    fours: 0,
-    sixes: 0,
-    out: false
-  };
-
-  teamObj.players.push(player);
-  //alert(`Added ${player.name} (${player.id}) to ${teamObj.name}`);
-  renderPlayerList(team);
-}
-
-
-// ==========================
-// UI PLAYER LIST RENDERING
+// HISTORY AND UNDO
 // ==========================
 
-function renderPlayerList(teamKey) {
-  const teamObj = teamKey === 'team1' ? team1 : team2;
-  const listElement = document.getElementById(`${teamKey}-player-list`);
-  const teamNameElement = document.getElementById(`${teamKey}-name-display`);
-
-  // Update header with team name
-  teamNameElement.textContent = teamObj.name;
-
-  // Clear existing list
-  listElement.innerHTML = "";
-
-  // Render each player
-  teamObj.players.forEach(player => {
-    const li = document.createElement("li");
-    li.className = "list-group-item d-flex justify-content-between align-items-center";
-    li.textContent = `${player.name} (${player.id})`;
-    listElement.appendChild(li);
-  });
-}
-
-// history
 let scoreHistory = [];
-
 let currentOver = 1;
 let legalBallsInOver = 0;
 
@@ -178,7 +114,9 @@ function saveState() {
     team: currentBattingTeam === team1 ? 'team1' : 'team2',
     runs: currentBattingTeam.runs,
     wickets: currentBattingTeam.wickets,
-    balls: currentBattingTeam.balls
+    balls: currentBattingTeam.balls,
+    over: currentOver,
+    legalBalls: legalBallsInOver
   });
 }
 
@@ -212,50 +150,31 @@ function addBallToHistory(run) {
     currentOver++;
     legalBallsInOver = 0;
   }
-}
 
+  document.getElementById("current-over").textContent = `Current Over: ${currentOver}`;
+}
 
 function undoLastAction() {
   if (scoreHistory.length === 0) return;
 
   const lastState = scoreHistory.pop();
-  const teamObj = lastState.team === 'team1' ? team1 : team2;
+  currentBattingTeam = lastState.team === 'team1' ? team1 : team2;
 
-  teamObj.runs = lastState.runs;
-  teamObj.wickets = lastState.wickets;
-  teamObj.balls = lastState.balls;
+  currentBattingTeam.runs = lastState.runs;
+  currentBattingTeam.wickets = lastState.wickets;
+  currentBattingTeam.balls = lastState.balls;
+  currentOver = lastState.over;
+  legalBallsInOver = lastState.legalBalls;
 
   updateScoreDisplay();
 
-  // Determine which over to remove the ball from
-  let overToEdit = currentOver;
-  if (legalBallsInOver === 0 && currentOver > 1) {
-    overToEdit = currentOver - 1;
-  }
-
-  const overBox = document.getElementById(`over-${overToEdit}`);
-  if (overBox && overBox.lastChild && overBox.childNodes.length > 1) {
-    const lastBall = overBox.lastChild;
-    const lastBallText = lastBall.textContent;
-
-    overBox.removeChild(lastBall);
-
-    if (lastBallText !== "WD" && lastBallText !== "NB") {
-      legalBallsInOver--;
-      if (legalBallsInOver < 0) {
-        legalBallsInOver = 5;
-        currentOver--;
-      }
-    }
-
-    // If only label remains, remove the over box
-    if (overBox.childNodes.length === 1) {
-      overBox.remove();
+  let overToEdit = document.getElementById(`over-${currentOver}`);
+  if (overToEdit && overToEdit.lastChild && overToEdit.childNodes.length > 1) {
+    overToEdit.removeChild(overToEdit.lastChild);
+    if (overToEdit.childNodes.length === 1) {
+      overToEdit.remove();
     }
   }
 
-  // Update UI
   document.getElementById("current-over").textContent = `Current Over: ${currentOver}`;
 }
-
-
