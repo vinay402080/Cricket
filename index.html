@@ -30,12 +30,52 @@
     </div>
 
     <div class="my-3">
-        <h6>Ball History</h6>
+        <div class="d-flex align-items-center mt-2">
+          <h6 class="mb-0 me-3">Ball History :</h6>
+          <div id="current-over" class="text-muted">Current Over: 1</div>
+        </div>
+
         <div id="ball-history" class="d-flex overflow-auto gap-3 border rounded p-2" style="white-space: nowrap;"></div>
     </div>
+    
+    <!-- player performance -->
+     <div class="my-4">
+        <h6>Player Performance</h6>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped text-center">
+              <thead class="table-dark">
+                <tr>
+                  <th><button type="button" class="btn btn-outline-light btn-sm" onclick="addplayertotable()">Player</button></th>
+                  <th>Runs</th>
+                  <th>Balls</th>
+                  <th>4s</th>
+                  <th>6s</th>
+                  <th>Strike Rate</th>
+                </tr>
+              </thead>
+              <tbody id="player-performance-body">
+                <!-- Dynamic rows will be inserted here -->
+                <!-- <tr>
+                  <td>Player 1</td>
+                  <td>35</td>
+                  <td>25</td>
+                  <td>4</td>
+                  <td>2</td>
+                  <td>140.00</td>
+                </tr> -->
+                <!-- Add more rows dynamically via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
 
    <div class="container my-4 p-3 border rounded shadow-sm" id="controls">
-        <h5 class="mb-3">Update Score</h5>
+       <div class="d-flex align-items-center my-3">
+          <h5 class="mb-0 me-3">Update Score</h5>
+          <button class="btn btn-success py-0" style="height: calc(1.25em + 0.75rem + 2px);" onclick="startMatch()">Start Match</button>
+        </div>
+
+
         <div class="mb-2">
             <!-- Run Buttons -->
             <button class="btn btn-outline-primary me-1" onclick="addRuns(0)">0</button>

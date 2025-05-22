@@ -176,6 +176,15 @@ function addBallToHistory(run) {
   ball.textContent = run;
   overBox.appendChild(ball);
 
+  // Save striker and run for undo
+  if (!scoreHistory[scoreHistory.length - 1].ballHistory) {
+    scoreHistory[scoreHistory.length - 1].ballHistory = [];
+  }
+  scoreHistory[scoreHistory.length - 1].ballHistory.push({
+    striker,
+    run
+  });
+
   if (run !== 'WD' && run !== 'NB') {
     legalBallsInOver++;
   }
@@ -183,10 +192,14 @@ function addBallToHistory(run) {
   if (legalBallsInOver === 6) {
     currentOver++;
     legalBallsInOver = 0;
+
+    // Optional: rotate strike at end of over
+    [striker, nonStriker] = [nonStriker, striker];
   }
 
   document.getElementById("current-over").textContent = `Current Over: ${currentOver}`;
 }
+
 
 function undoLastAction() {
   if (scoreHistory.length === 0) return;
@@ -199,9 +212,13 @@ function undoLastAction() {
   currentBattingTeam.balls = lastState.balls;
   currentOver = lastState.over;
   legalBallsInOver = lastState.legalBalls;
+  playerStats = JSON.parse(JSON.stringify(lastState.playerStats));
+  striker = lastState.striker;
+  nonStriker = lastState.nonStriker;
 
   updateScoreDisplay();
 
+  // Remove last ball from history UI
   let overToEdit = document.getElementById(`over-${currentOver}`);
   if (overToEdit && overToEdit.lastChild && overToEdit.childNodes.length > 1) {
     overToEdit.removeChild(overToEdit.lastChild);
@@ -211,7 +228,13 @@ function undoLastAction() {
   }
 
   document.getElementById("current-over").textContent = `Current Over: ${currentOver}`;
+
+  // Update all player rows
+  for (const player in playerStats) {
+    updatePlayerRow(player);
+  }
 }
+
 
 //==========================================================================================
 let players = JSON.parse(localStorage.getItem("players")) || [];
